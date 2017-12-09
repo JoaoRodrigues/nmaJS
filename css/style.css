@@ -1,0 +1,157 @@
+/* 
+  Main CSS for webnma web page
+  
+  João Rodrigues @ 2017
+  https://github.com/joaorodrigues
+ */
+
+/* Fonts */
+@font-face {
+    font-family: "Montserrat";
+    src: url("fonts/Montserrat-Regular.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: "Montserrat";
+    src: url("fonts/Montserrat-SemiBold.ttf") format("truetype");
+    font-weight: bold;
+    font-style: normal;
+}
+
+/* Hidden/Visible classes */
+/* Forces browser to reassess styling */
+.hidden {
+	display: none !important;
+}
+
+.invisible {
+	visibility: hidden !important;
+}
+
+.visible-flex {
+	display: flex;
+	visibility: visible;
+}
+
+/* CSS Styling */
+html,
+body {
+	margin: 0;
+	padding: 0;
+	width: 100vw;
+	height: 100vh;
+}
+
+/* Input field for PDB ID */
+#loadbox {
+	/* Keep above all other content*/
+	position: absolute;
+	z-index: 999;
+	top: 0;
+	left: 0;
+
+	/* Center vertically on page */
+	display: flex; 
+	width: 100%;
+	height: 90%;
+
+	flex-direction: column;
+	flex-wrap: nowrap;
+	
+	align-items: center;
+	justify-content: center;
+
+	background-color: rgba(255, 255, 255, 0.8);;
+}
+
+#loadbox > input {
+	/* Center Horizontally */
+	margin: 0 auto;
+
+	height: 4em;
+	width: 20%;
+	text-align: center;
+
+	border: solid;
+	border-radius: 5px;
+	border-color: rgb(100, 160, 235);
+	background-color: rgb(240, 240, 240);
+
+	font-family: "Montserrat";
+	font-weight: bold;
+	font-size: 0.8em;
+
+}
+/* Disable on click blueish halo */
+#loadbox > input:focus {
+    outline: none;
+}
+
+#loadbox > div { /* progress bar */
+	/* Center Horizontally */
+	margin: 0 auto;
+
+	height: 2%;
+	width: 25%;
+	text-align: center;
+
+	border: none;
+	border-radius: 5px;
+
+	font-family: "Montserrat";
+	padding-top: .5%;
+}
+
+#container {
+	/*border: 1px red solid;*/
+	height: 90vh;
+	width: 100vw;
+}
+
+#viewport {
+ 	float: left;
+ 	width: 50%;
+ 	height: 100%;
+}
+
+/* NGL Viewport */
+#ngl-canvas {
+	width: 100%;
+	height: 100%;
+}
+
+#heatmap {
+ 	float: left;
+ 	width: 50%;
+ 	height: 50%;
+}
+
+#barchart {
+ 	float: left;
+ 	width: 50%;
+ 	height: 50%;
+}
+
+/* Footer */
+footer {
+	height: 10%;
+}
+
+#stats {
+	text-align: center;
+	
+	font-family: "Montserrat";
+	font-size: 0.8em;
+	color: rgb(50, 50, 50);
+}
+
+#about {
+	text-align: center;
+	
+	font-family: "Montserrat";
+	font-size: 0.8em;
+	color: rgb(150, 150, 150);
+	
+	padding-top: 1%;
+}

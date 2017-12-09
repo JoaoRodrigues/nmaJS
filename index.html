@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="css/style.css">
+
+		<!-- <script src="http://mlweb.loria.fr/lalolib.js"></script> -->
+		<!-- <script src="https://d3js.org/d3.v4.min.js"></script> -->
+
+		<!-- <script src="lib/d3.v4.min.js"></script> -->
+		
+		<script src="lib/lalolib.js"></script>
+		<script src="lib/ngl.js"></script>
+		<script src="js/nma.js"></script>
+	</head>
+
+	<body>
+		<div class="visible-flex" id="loadbox">
+			<input type="text" name="pdbid" id="input_pdb" onkeypress="return RunApp(event)" placeholder="Enter a PDB ID (e.g. 1ctf or 1brs.A) and press Enter">
+			<div class="invisible" id="progress_div"></div>
+		</div>
+
+		<div id="container">
+				<div id="viewport">
+					<div id="ngl-canvas"><div></div></div>				
+				</div>
+				<div id="heatmap"></div>
+				<div id="barchart"></div>
+		</div>
+		<footer>
+			<div id="stats"></div>
+			<div id="about">Normal-Mode Analysis of Protein Structures in JavaScript by <a href="http://github.com/joaorodrigues">Jo&atilde;o Rodrigues</a></div>
+		</footer>
+	</body>
+</html>
