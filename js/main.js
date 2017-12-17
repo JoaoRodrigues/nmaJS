@@ -111,8 +111,8 @@ function updateProgress(message, delay) {
 // Click on two atoms, change mtx, recalculate NMA and redraw
 function pickAtom(pickingProxy) {
     let atom;
-    if (pickingProxy && pickingProxy.atom) {
-        atom = pickingProxy.atom;
+    if (pickingProxy && (pickingProxy.atom || pickingProxy.closestBondAtom)) {
+        atom = pickingProxy.atom || pickingProxy.closestBondAtom;
 
         if (atomsPicked.length == 1) {
             
