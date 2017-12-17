@@ -1,34 +1,66 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<link rel="stylesheet" type="text/css" href="css/style.css">
+  <head>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
 
-		<!-- <script src="http://mlweb.loria.fr/lalolib.js"></script> -->
-		<!-- <script src="https://d3js.org/d3.v4.min.js"></script> -->
+    <script src="lib/d3-color.v1.min.js"></script>
+    <script src="lib/d3-interpolate.v1.min.js"></script>
+    <script src="lib/d3-scale-chromatic.v1.min.js"></script>
 
-		<!-- <script src="lib/d3.v4.min.js"></script> -->
-		
-		<script src="lib/lalolib.js"></script>
-		<script src="lib/ngl.js"></script>
-		<script src="js/nma.js"></script>
-	</head>
+    <script src="lib/jsfeat-min.js"></script>
+    <script src="lib/ngl.js"></script>
 
-	<body>
-		<div class="visible-flex" id="loadbox">
-			<input type="text" name="pdbid" id="input_pdb" onkeypress="return RunApp(event)" placeholder="Enter a PDB ID (e.g. 1ctf or 1brs.A) and press Enter">
-			<div class="invisible" id="progress_div"></div>
-		</div>
+    <script src="js/gnm.js"></script>
+    <script src="js/main.js"></script>
+  </head>
 
-		<div id="container">
-				<div id="viewport">
-					<div id="ngl-canvas"><div></div></div>				
-				</div>
-				<div id="heatmap"></div>
-				<div id="barchart"></div>
-		</div>
-		<footer>
-			<div id="stats"></div>
-			<div id="about">Normal-Mode Analysis of Protein Structures in JavaScript by <a href="http://github.com/joaorodrigues">Jo&atilde;o Rodrigues</a></div>
-		</footer>
-	</body>
+  <body>
+    <div class="visible-flex" id="loadbox">
+      <input type="text" name="pdbid" id="input_pdb" onkeypress="return launchNMA(event)" placeholder="Enter a PDB ID (e.g. 1ctf or 1brs.A) and press Enter">
+      <div class="invisible" id="progress_div"></div>
+    </div>
+
+    <div id="container">
+    </div>
+    <footer>
+      <div id="stats"></div>
+      <div id="about">Interactive Flexibility Analysis of Protein Structures by <a href="http://github.com/joaorodrigues">Jo&atilde;o Rodrigues</a></div>
+    </footer>
+
+    <script type="text/javascript">
+
+      // On DOM loaded
+      // Setup NGL stage and paramters
+      document.addEventListener("DOMContentLoaded", function () {
+    
+        let stageParams = { backgroundColor: "white", tooltip: false,};
+        stage = new NGL.Stage("container", stageParams);
+
+        // create tooltip element and add to the viewer canvas
+        let tooltip = document.createElement("div");
+        tooltip.setAttribute("id", "ngl-tooltip");
+        Object.assign(tooltip.style, {
+          display: "none",
+          position: "absolute",
+          zIndex: 10,
+          pointerEvents: "none",
+          backgroundColor: "rgba(0, 0, 0, 0.2)",
+          color: "white",
+          padding: "0.4em",
+          fontFamily: "Montserrat"
+        });
+        stage.viewer.container.appendChild(tooltip);
+
+        // Handle resizing events
+        function handleResize() {
+          stage.handleResize();
+        }
+
+        window.addEventListener("resize", handleResize, false);
+
+      });
+
+    </script>
+
+  </body>
 </html>

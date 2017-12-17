@@ -39,8 +39,8 @@ html,
 body {
 	margin: 0;
 	padding: 0;
-	width: 100vw;
-	height: 100vh;
+	width: 100%;
+	height: 100%;
 }
 
 /* Input field for PDB ID */
@@ -104,33 +104,8 @@ body {
 }
 
 #container {
-	/*border: 1px red solid;*/
-	height: 90vh;
-	width: 100vw;
-}
-
-#viewport {
- 	float: left;
- 	width: 50%;
- 	height: 100%;
-}
-
-/* NGL Viewport */
-#ngl-canvas {
+	height: 90%;
 	width: 100%;
-	height: 100%;
-}
-
-#heatmap {
- 	float: left;
- 	width: 50%;
- 	height: 50%;
-}
-
-#barchart {
- 	float: left;
- 	width: 50%;
- 	height: 50%;
 }
 
 /* Footer */
