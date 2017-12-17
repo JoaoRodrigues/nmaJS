@@ -13,6 +13,8 @@ let eigenvalues;
 let eigenvectors;
 let sqfluctuations;
 let overallFluctuation;
+let initialMaximumFluctuation;
+
 
 let residueToIdx = {}; // residue number to mtx index
 
@@ -106,8 +108,11 @@ function GNM(kirchoffMatrix, modes = 20) {
     
     // Check for zero-value modes (should be only 1)
     const small = 1e-100; // zero enough
-    const numZeroModes = sumArray(evals.data.map(eval => (eval <= small) ? 1: 0));
+    let numZeroModes = sumArray(evals.data.map(eval => (eval <= small) ? 1: 0));
     console.log(numZeroModes + " zero modes detected");
+    if (numZeroModes === 0) {
+        numZeroModes = 1;
+    }
 
     // Modes are sorted in decreasing order of eigenvalue
     // evecs.data contains a flattened matrix:
@@ -182,6 +187,12 @@ function calcSquareFluctuations(modeIndices) {
     sqfluctuations = all_sqfluctuations;
 
     // overallFluctuation = sumArray(sqfluctuations) / sqfluctuations.length;
+
+    // Get initial max fluct for coloring purposes
+    if (initialMaximumFluctuation === undefined) {
+        initialMaximumFluctuation = Math.max.apply(null, sqfluctuations);
+    }
+
 
     t1 = performance.now();
     console.log("Calculated atomic square fluctuations in: " + (t1 - t0) + " milliseconds");

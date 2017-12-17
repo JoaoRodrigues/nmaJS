@@ -213,9 +213,9 @@ function colorByFluctuation(fluctarray) {
     let colorScale = d3.interpolateRdBu;
 
     // Normalize fluctuations
-    const maxSqF = Math.max.apply(null, fluctarray);
+    // const maxSqF = Math.max.apply(null, fluctarray);
     const minSqF = Math.min.apply(null, fluctarray);
-    const rangeSqF = (maxSqF - minSqF);
+    const rangeSqF = (initialMaximumFluctuation - minSqF);
     let normalizedArray = fluctarray.map(v => ((v - minSqF) / rangeSqF));
 
     let schemeId = NGL.ColormakerRegistry.addScheme(function (params) {
