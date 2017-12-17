@@ -3,12 +3,20 @@
 // Global vars
 let stage;
 let component;
-let atomsPicked = [];
+
+// UI Global Variables
+let atomPicked = null;
+let bondPicked = null;
 let bondsDrawn = new Set();
 
 // Regexes
 const fullStructure = new RegExp("[0-9A-Za-z]{4}$");
 const partialStructure = new RegExp("([0-9A-Za-z]{4})\.([A-Z0-9a-z]{1})$");
+
+// RGB Arrays for colors
+const newBondColor = "rgb(255, 155, 0)" // Light orange
+const selectedHaloColor = "rgb(100, 150, 150)" // Teal/Gray
+const highlightedBondColor = "rgb(100, 0, 0)"; // Dark red
 
 async function launchNMA(e) {
 
@@ -91,8 +99,9 @@ function renderMolecule() {
     let pa = component.structure.getView(new NGL.Selection('.CA')).getPrincipalAxes();
     stage.animationControls.rotate(pa.getRotationQuaternion(), 0);
     stage.autoView();
-    stage.signals.clicked.add(pickAtom);
-    stage.signals.hovered.add(hoverAtom);
+
+    stage.mouseControls.add("clickPick-left", pickElement);
+    stage.mouseControls.add("hoverPick", hoverComponent);
 }
 
 // Updates messages under input text with a certain delay (in miliseconds)
@@ -107,73 +116,137 @@ function updateProgress(message, delay) {
     });
 }
 
-// Most important function of *this* universe
-// Click on two atoms, change mtx, recalculate NMA and redraw
-function pickAtom(pickingProxy) {
-    let atom;
-    if (pickingProxy && (pickingProxy.atom || pickingProxy.closestBondAtom)) {
-        atom = pickingProxy.atom || pickingProxy.closestBondAtom;
+// UI functions
+// Most important functions of *this* universe
 
-        if (atomsPicked.length == 1) {
-            
-            let other = atomsPicked[0];
-            
-            // Edit Kirchhoff & draw bonds
-            let iA = residueToIdx[other.resno];
-            let iB = residueToIdx[atom.resno];
+// For simplicity, let's use a single-button UI
+// One click on an atom creates a selection (and an accompanying halo)
+// A second click on another atom draws a bond and clears the selection.
+// Clicking a halo undoes the selection.
+// Clicking a bond twice removes it (first time highlights red to convey selection)
+function pickElement(stage, pickingProxy) {
 
-            let bondName = "bond_" + atom.index + "_" + other.index;
-            if (!bondsDrawn.has(bondName)) {
-                
-                editKirchhoff(iA, iB, 10);
-                NMA(mtx);
-                colorByFluctuation(sqfluctuations);
-
-                drawBond(atom, other);
-            }
-            
-            atomsPicked = []; // Clear selection
-        } else {
-            atomsPicked.push(atom);
+    // Click on Halo
+    if (pickingProxy && pickingProxy.sphere) {
+        if (pickingProxy.sphere.shape.name == "SelectedAtomHalo") {
+            // Clear selection and remove halo
+            atomPicked = null;
+            destroyHalo();
         }
+    }
 
+    // Click on Atom
+    if (pickingProxy && (pickingProxy.atom || pickingProxy.closestBondAtom)) {
+        let atom = pickingProxy.atom || pickingProxy.closestBondAtom;
 
+        if (atomPicked == null) { // first atom picked
+            atomPicked = atom;
+            drawHalo(atom, selectedHaloColor);
+        }
+        else {
+
+            let other = atomPicked;
+            
+            // This should not be possible because the halo sphere overlaps with the 
+            // atom representation. But just for sanity.
+            if (other != atom) {
+                // If bond does not exist, draw bond and calculate changes
+                let bondName = "bond_" + atom.index + "_" + other.index;
+                if (!bondsDrawn.has(bondName)) {
+
+                    let iA = residueToIdx[other.resno];
+                    let iB = residueToIdx[atom.resno];                
+                    editKirchhoff(iA, iB, 10);
+                    NMA(mtx);
+                    colorByFluctuation(sqfluctuations);
+
+                    drawBond(atom, other, newBondColor);
+                }
+            }
+
+            // Clear selection and remove halo
+            atomPicked = null;
+            destroyHalo();
+        } 
     };
 
+    // Click on Bond
     if (pickingProxy && pickingProxy.cylinder) {
+
+        let bond = pickingProxy.cylinder;
         let bondName = pickingProxy.cylinder.shape.name;
-        
+
+        // Get bonded atoms from bond name
         let tokens = bondName.split("_");
         let atomA = component.structure.getAtomProxy(tokens[1]);
         let atomB = component.structure.getAtomProxy(tokens[2]);
 
-        let iA = residueToIdx[atomA.resno];
-        let iB = residueToIdx[atomB.resno];
-        
-        editKirchhoff(iA, iB, 1);
-        NMA(mtx);
-        colorByFluctuation(sqfluctuations);
+        if (bondPicked == null) { // Highlight bond
+            bondPicked = bond;
+            // Easier to redraw bond
+            destroyBond(atomA, atomB);
+            drawBond(atomA, atomB, highlightedBondColor);
+        }
+        else if (bondPicked.shape.name == bond.shape.name) { // Remove bond
+            // Recalculate NMA
+            let iA = residueToIdx[atomA.resno];
+            let iB = residueToIdx[atomB.resno];
+            editKirchhoff(iA, iB, 1);
+            NMA(mtx);
+            colorByFluctuation(sqfluctuations);
+            // Destroy Bond
+            destroyBond(atomA, atomB);
 
-        eraseBond(atomA, atomB);
+            bondPicked = null;
+        }
+        else { // Another bond was selected. Change selection.
+            let otherBond = bondPicked;
+            let otherBondName = otherBond.shape.name;
+            let otherAtomA = component.structure.getAtomProxy(otherBondName.split("_")[1]);
+            let otherAtomB = component.structure.getAtomProxy(otherBondName.split("_")[2]);
+
+            destroyBond(otherAtomA, otherAtomB);
+            drawBond(otherAtomA, otherAtomB, newBondColor);
+
+            destroyBond(atomA, atomB);
+            drawBond(atomA, atomB, highlightedBondColor);
+
+            bondPicked = bond;
+        }
     }
 };
 
-function drawBond(atomA, atomB) {
+function drawHalo(atom, color = "red") {
+    let haloColor = new NGL.Color(color);
+    let shape = new NGL.Shape("SelectedAtomHalo");
+    shape.addSphere([atom.x, atom.y, atom.z], haloColor, 1.0);
+    let shapeComponent = stage.addComponentFromObject(shape);
+    shapeComponent.addRepresentation("buffer");    
+}
+
+// Since we only make *one* halo, no need to get fancy
+function destroyHalo() {
+    let halo = stage.getComponentsByName("SelectedAtomHalo").first; // returns a collection with one element
+    stage.removeComponent(halo);
+}
+
+function drawBond(atomA, atomB, color = "yellow") {
+
+    let bondColor = new NGL.Color(color);
 
     let bondName = "bond_" + atomA.index + "_" + atomB.index;
     bondsDrawn.add(bondName);
     let rev_bondName = "bond_" + atomB.index + "_" + atomA.index;
     bondsDrawn.add(rev_bondName);
 
-    let shape = new NGL.Shape(bondName);
-    // eventually change cylinder color: (1,1,0) is yellow
-    shape.addCylinder([atomA.x, atomA.y, atomA.z], [atomB.x, atomB.y, atomB.z], [1,1,0], 0.1);
+    let shape = new NGL.Shape(bondName, { openEnded: true }); // not capped
+    shape.addCylinder([atomA.x, atomA.y, atomA.z], [atomB.x, atomB.y, atomB.z], bondColor, 0.2);
 
     let shapeComponent = stage.addComponentFromObject(shape);
     shapeComponent.addRepresentation("buffer");
 }
 
-function eraseBond(atomA, atomB) {
+function destroyBond(atomA, atomB) {
 
     let bondName = "bond_" + atomA.index + "_" + atomB.index;
     bondsDrawn.delete(bondName);
@@ -185,26 +258,25 @@ function eraseBond(atomA, atomB) {
 }
 
 // Hovering
-function hoverAtom(pickingProxy) {
+function hoverComponent(stage, pickingProxy) {
 
-  let tooltip = document.getElementById("ngl-tooltip");
+    let tooltip = document.getElementById("ngl-tooltip");
 
-  if (pickingProxy && (pickingProxy.atom || pickingProxy.bond)){
+    if (pickingProxy && (pickingProxy.atom || pickingProxy.bond)){
     
-    let atom = pickingProxy.atom || pickingProxy.closestBondAtom;
-    let cp = pickingProxy.canvasPosition;
+        let atom = pickingProxy.atom || pickingProxy.closestBondAtom;
+        let cp = pickingProxy.canvasPosition;
 
-    let atomFluctuation = sqfluctuations[atom.index];
-    tooltip.innerText = atom.resname + atom.resno + "." + atom.atomname + " = " + atomFluctuation.toFixed(3);
+        let atomFluctuation = sqfluctuations[atom.index];
+        tooltip.innerText = atom.resname + atom.resno + "." + atom.atomname + " = " + atomFluctuation.toFixed(3);
     
-    tooltip.style.bottom = cp.y + 3 + "px";
-    tooltip.style.left = cp.x + 3 + "px";
-    tooltip.style.display = "block";
-  }
-  else {
-    
-    tooltip.style.display = "none";
-  }
+        tooltip.style.bottom = cp.y + 3 + "px";
+        tooltip.style.left = cp.x + 3 + "px";
+        tooltip.style.display = "block";
+    }
+    else {
+        tooltip.style.display = "none";
+    }
 };
 
 // Coloring Function
