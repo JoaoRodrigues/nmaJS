@@ -191,7 +191,7 @@ function pickElement(stage, pickingProxy) {
             // Recalculate NMA
             let iA = residueToIdx[atomA.resno];
             let iB = residueToIdx[atomB.resno];
-            editKirchhoff(iA, iB, 1);
+            editKirchhoff(iA, iB, -1); // negative factor restores original matrix element
             NMA(mtx);
             colorByFluctuation(sqfluctuations);
             // Destroy Bond
@@ -286,7 +286,8 @@ function colorByFluctuation(fluctarray) {
 
     // Normalize fluctuations
     // const maxSqF = Math.max.apply(null, fluctarray);
-    const minSqF = Math.min.apply(null, fluctarray);
+    // const minSqF = Math.min.apply(null, fluctarray);
+    const minSqF = 0.0;
     const rangeSqF = (initialMaximumFluctuation - minSqF);
     let normalizedArray = fluctarray.map(v => ((v - minSqF) / rangeSqF));
 

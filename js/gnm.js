@@ -6,6 +6,7 @@ const dtype = jsfeat.F32_t | jsfeat.C1_t; // data type for jsfeat matrices
 const selectedModes = [0, 1, 2, 3, 4, 5];
 
 // Global variables
+let mtxOriginal; // Original Kirchoff Matrix to keep track of connectivity
 let mtx; // Kirchoff Matrix
 let numAtoms; // Number of atoms in the structure
 
@@ -59,17 +60,31 @@ function buildKirchhoff(structure) {
             }
         }
     }
+
     t1 = performance.now();
     console.log("Calculated distances in: " + (t1 - t0) + " milliseconds");
+
+    // Store initial matrix (not very efficient, but this is the 21st century. RAM is cheap)
+    mtxOriginal = new jsfeat.matrix_t(numAtoms, numAtoms, dtype);
+    for (let i = 0; i < mtx.data.length; i++) {
+        mtxOriginal.data[i] = mtx.data[i];
+    }
 }
 
 
 // Alters the matrix 
 // e.g. idxA = 0, idxB = 1 <changes> (0,1), (1,0) (0,0) (1,1)
+// If factor is negative, will restore the original value of the matrix.
 function editKirchhoff(idxA, idxB, factor = 10) {
 
-        mtx.data[idxB * numAtoms + idxA] = -1 * factor;
-        mtx.data[idxA * numAtoms + idxB] = -1 * factor;
+        if (factor < 0) {
+            mtx.data[idxB * numAtoms + idxA] = mtxOriginal.data[idxB * numAtoms + idxA];
+            mtx.data[idxA * numAtoms + idxB] = mtxOriginal.data[idxA * numAtoms + idxB];
+        }
+        else {
+            mtx.data[idxB * numAtoms + idxA] = -1 * factor;
+            mtx.data[idxA * numAtoms + idxB] = -1 * factor;            
+        }
 
         // Sum all columns/rows to get the diagonal right
         // Slower than setting directly but easier to 'undo'
@@ -96,6 +111,12 @@ function getColSum(idx) {
 // Eigendecomposition from JSFeat
 // Fills the two eigenvectors/eigenvalues arrays
 function GNM(kirchoffMatrix, modes = 20) {
+
+    // let sumdiag = 0.0;
+    // for (let x = 0; x < kirchoffMatrix.rows; x++) {
+    //     sumdiag += kirchoffMatrix.data[(x * numAtoms + x)];
+    // }
+    // console.log("sum of diagonal elements: " + sumdiag);
 
     // Pre-allocate result arrays
     let evals = new jsfeat.matrix_t(numAtoms, 1, dtype);
