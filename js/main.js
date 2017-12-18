@@ -92,11 +92,11 @@ async function launchNMA(e) {
 
 function renderMolecule() {
 
-    component.addRepresentation('hyperball', { sele: 'protein', 
+    component.addRepresentation('hyperball', { sele: 'protein or nucleic', 
                                                color: 'white',
                                                quality: 'high' }); 
 
-    let pa = component.structure.getView(new NGL.Selection('.CA')).getPrincipalAxes();
+    let pa = component.structure.getView(new NGL.Selection(".CA or .C5'")).getPrincipalAxes();
     stage.animationControls.rotate(pa.getRotationQuaternion(), 0);
     stage.autoView();
 
