@@ -15,8 +15,8 @@ const partialStructure = new RegExp("([0-9A-Za-z]{4})\.([A-Z0-9a-z]{1})$");
 
 // RGB Arrays for colors
 const newBondColor = "rgb(255, 155, 0)" // Light orange
-const selectedHaloColor = "rgb(100, 150, 150)" // Teal/Gray
-const highlightedBondColor = "rgb(100, 0, 0)"; // Dark red
+const selectedHaloColor = "rgb(255, 255, 150)" // Yellowish
+const highlightedBondColor = "rgb(200, 0, 0)"; // Red
 
 async function launchNMA(e) {
 
