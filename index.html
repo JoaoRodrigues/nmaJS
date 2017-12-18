@@ -15,13 +15,48 @@
   </head>
 
   <body>
+    <!-- About/Help -->
+    <div class="visible" id="help">
+      <img id="help_icon" src="/img/question_mark.png"/>
+      <div id="help_container">
+        <p>
+          <p><strong>About</strong></p>
+          <p>
+            By connecting neighboring atoms in a protein structure with springs, we can calculate (approximately) the flexibility
+            of each atom using a mathematical framework called Gaussian Network Models (GNM).
+          </p>
+          <p>
+            This web page uses your browser to calculate a GNM on your protein of interest and allows you to explore, in real-time, 
+            the effects of adding extra bonds to the overall flexibility. For large proteins this might take a while ...
+          </p>
+          <p><strong>How to use it?</strong></p>
+          <p>
+            There are three simple rules: 
+            <ol>
+              <li>Click on any two atoms to create a bond between them.</li>
+              <li>Click twice on any bond to remove it. You can only remove bonds you added.</li>
+              <li>Any change triggers the recalculation of the GNM.</li>
+            </ol>
+            <p>Your protein will be colored blue-to-red in increasing predicted flexibility.</p>
+          </p>
+        </p>
+      </div>
+    </div>
+    
+    <!-- Score -->
+<!--     <div class="visible" id="score">
+      -9000.00
+    </div> -->
+
+    <!-- Load/Input -->
     <div class="visible-flex" id="loadbox">
       <input type="text" name="pdbid" id="input_pdb" onkeypress="return launchNMA(event)" placeholder="Enter a PDB ID (e.g. 1ctf or 1brs.A) and press Enter">
       <div class="invisible" id="progress_div"></div>
     </div>
 
-    <div id="container">
-    </div>
+    <!-- NGL Viewer -->
+    <div id="container"></div>
+    
     <footer>
       <div id="stats"></div>
       <div id="about">Interactive Flexibility Analysis of Protein Structures by <a href="http://github.com/joaorodrigues">Jo&atilde;o Rodrigues</a></div>
