@@ -128,12 +128,12 @@ function GNM(kirchoffMatrix, modes = 20) {
     console.log("Diagonalized matrix in: " + (t1 - t0) + " milliseconds");
     
     // Check for zero-value modes (should be only 1)
-    const small = 1e-100; // zero enough
+    const small = 1e-6; // zero enough
     let numZeroModes = sumArray(evals.data.map(eval => (eval <= small) ? 1: 0));
     console.log(numZeroModes + " zero modes detected");
-    if (numZeroModes === 0) {
-        numZeroModes = 1;
-    }
+    // if (numZeroModes === 0) {
+    //     numZeroModes = 1;
+    // }
 
     // Modes are sorted in decreasing order of eigenvalue
     // evecs.data contains a flattened matrix:
