@@ -58,6 +58,8 @@ main {
     text-align: center;
     font-family: inherit;
     font-size: 1rem;
+
+    caret-color: transparent;
 }
 
 #input-container > label {
