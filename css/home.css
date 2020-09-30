@@ -68,7 +68,6 @@ main > #colorbar-container {
 
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between;
 }
 
 main > #colorbar-container > #colorbar {
@@ -102,5 +101,5 @@ footer {
 }
 
 .hidden {
-    visibility: collapse;
+    display: none !important;
 }
