@@ -23,7 +23,6 @@ body {
 
 main {
     margin-top: 80px; /* Margin top set to logo/header height */
-    margin-bottom: 30px;
 
     display: flex;
     flex: 0 0 calc(100vh - 110px);  /* dynamically adjust */
@@ -115,10 +114,10 @@ canvas {
 }
 
 footer {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    height: 30px; /* Set the fixed height of the footer here */
+    flex-basis: 100%;
+
+    min-height: 30px; /* Set the fixed height of the footer here */
+    line-height: 30px;
     text-align: center; /* Horizontally center the text */
 
     font-size: 0.8rem;
