@@ -7,11 +7,8 @@ export function displayPDB(moldata) {
     let progressbox = document.getElementById("progress-text");
     progressbox.className = "hidden";
 
-    let container = document.getElementById("gldiv");
+    let container = document.getElementById("viewer-container");
     container.className = "visible";
-
-    let colorbar = document.getElementById("colorbar-container");
-    colorbar.className = "visible";
 
     // Now do actual stuff!
     glviewer = $3Dmol.createViewer("gldiv", {});
