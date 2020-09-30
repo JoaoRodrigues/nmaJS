@@ -1,0 +1,106 @@
+/* CSS for the landing page */
+
+html, body {
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+html {
+    font-family: "Montserrat";
+    width: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+
+    height: 100vh;
+    min-height: 100%;
+}
+
+main {
+    display: flex;
+    flex: 0 0 calc(100vh - 35px);  /* dynamically adjust */
+    flex-wrap: wrap;
+	align-items: center;
+    justify-content: center;
+}
+
+main > input {
+    width: 500px;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    border-bottom: 3px solid #9b9b9b;
+
+    text-align: center;
+    font-family: inherit;
+    font-size: 1rem;
+}
+
+main > input:focus {
+    border-bottom: 3px solid #11998e;
+}
+
+main > #gldiv {
+    width: 80vw;
+    height: 80vh;
+}
+
+/* For some reason, the GLViewer canvas element
+ * is created with inline CSS rules that set its
+ * position to absolute. */
+canvas {
+    position: relative !important;
+
+    border-style: dashed;
+    border-radius: 1px;
+    border-color: rgb(200, 200, 200, 0.25);
+}
+
+main > #colorbar-container {
+    height: 40px;
+    width: 40vw;
+
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+main > #colorbar-container > #colorbar {
+    width: 100%;
+    height: 20px;
+    flex-basis: 100%;
+    background-image: linear-gradient(to right, red, white, blue);
+}
+
+main > #colorbar-container > span {
+    flex-basis: auto;
+    flex-grow: 1;
+
+    font-size: 0.9em;
+}
+
+main > #colorbar-container > #colorbar-label-r {
+    text-align: right;
+}
+
+footer {
+    flex: 0 0 30px;
+    font-size: 0.8em;
+    color: rgb(115, 115, 115);
+}
+
+
+/* Hidden/Visible toggles */
+.visible {
+    visibility: visible;
+}
+
+.hidden {
+    visibility: collapse;
+}
