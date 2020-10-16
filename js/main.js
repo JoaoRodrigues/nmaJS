@@ -1,7 +1,9 @@
-import { to3ptModel } from "./cgmodels.js"
-import { GNM } from './nma.js';
-import { downloadMolecule } from './parser.js';
-import { displayPDB } from './viewer.js';
+import { constants } from "./constants.js";
+import { getStructure } from './structure.js';
+import { buildDistanceMatrix } from "./geometry.js";
+// import { GNM } from './nma.js';
+// import { displayPDB } from './viewer.js';
+
 
 // Bind function to key presses
 let progressContainer = document.getElementById("progress-text");
@@ -19,17 +21,16 @@ inputTextBox.addEventListener("keydown", function (e) {
     }
 });
 
-export async function run(e) {
+// GL Viewer Things
+constants.glviewer = $3Dmol.createViewer("gldiv", {});  // global scope
 
-    let nmodes = 20;
+// "Main" function
+export async function run(e) {
 
     const pdbcode = e.target.value;
 
-    const pdbdata = await downloadMolecule(pdbcode);
+    const structure = await getStructure(pdbcode);
+    constants.distmtx = buildDistanceMatrix(structure);  // set globally _once_
 
-    const cgmodel = to3ptModel(pdbdata);
-
-    GNM(cgmodel, nmodes);
-
-    displayPDB(cgmodel);
+    // displayPDB(cgmodel);
 }
